@@ -67,6 +67,5 @@ while True:
 
 for i in range(20):
     s = s.next(rules)
-    print i, "".join(s.state)
 
 print s.sum()
