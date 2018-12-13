@@ -4,6 +4,7 @@ class Cart:
         self.y = y
         self.next_turn_state = 0
         self.direction = d
+        self.alive = True
     
     def move(self, tracks):
         if self.direction == "<":
@@ -63,6 +64,20 @@ class Cart:
                     self.direction = "<"
 
                 self.next_turn_state = 0
+        elif t == "-":
+            if not (self.direction == "<" or self.direction == ">"):
+                raise Exception("Derailed from - at " + str(self.x) + ", " + str(self.y))
+        elif t == "|":
+            if not (self.direction == "^" or self.direction == "v"):
+                raise Exception("Derailed from | at " + str(self.x) + ", " + str(self.y))
+
+def print_map(tracks, carts):
+    for y in range(len(tracks)):
+        text = tracks[y]
+        for c in carts:
+            if c.y == y:
+                text = text[:c.x] + c.direction + text[c.x+1:]
+        print text
 
 tracks = []
 carts = []
@@ -114,14 +129,17 @@ while True:
     y += 1
     
 while len(carts) > 1:
+    carts.sort(key=lambda c: (c.x, c.y))
     for c in carts:
-        c.move(tracks)
-
-    for c in carts:
-        for k in carts:
-            if not c == k and c.x == k.x and c.y == k.y:
-                carts.remove(c)
-                carts.remove(k)
+        if c.alive:
+            c.move(tracks)
+ 
+            for k in carts:
+                if not c == k and c.x == k.x and c.y == k.y:
+                    c.alive = False
+                    k.alive = False
+                
+    carts = filter(lambda x: x.alive, carts)
 
 if len(carts) == 1:
     print carts[0].x, carts[0].y

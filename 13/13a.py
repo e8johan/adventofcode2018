@@ -115,10 +115,10 @@ while True:
     
 crashed = False
 while not crashed:
-    for c in carts:
-        c.move(tracks)
+    carts.sort(key=lambda c: (c.x, c.y))
 
     for c in carts:
+        c.move(tracks)
         for k in carts:
             if not c == k and c.x == k.x and c.y == k.y:
                 print "Collision at", c.x, c.y
